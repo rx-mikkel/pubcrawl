@@ -5,6 +5,7 @@ body, html {
 
 	padding: 0px;
 	margin: 0px;
+	font-family: roboto;
 }
 
 .map {
@@ -28,4 +29,28 @@ body, html {
 
 h3 {
 	margin: 4px 0px;
+}
+
+.guide-window {
+	position: absolute;
+	top: 48px;
+	left: 50%;
+	transform: translate(-50%, 0px);
+	padding: 20px;
+	width: 320px;
+	text-align: center;
+	background-color: rgba(0,0,0,.5);
+	color: #fff;
+	border-radius: 6px;
+}
+
+.reset {
+	padding: 10px;
+	width: 200px;
+	background-color: #fff;
+	color: #333;
+	display: inline-block;
+	margin: 10px;
+	cursor: pointer;
+	border-radius: 4px;
 }

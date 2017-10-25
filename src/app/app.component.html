@@ -1,7 +1,15 @@
 <div id="map" class="map"></div>
+<div class="guide-window">
+	<p *ngIf="!originMarker">Click anywhere to set origin</p>
+	<p *ngIf="!destinationMarker && originMarker">Click anywhere to set destination</p>
+	<div class="reset" (click)="resetMarkers()" *ngIf="destinationMarker && originMarker">
+		Reset markers
+	</div>
+</div>
 <div class="ui-overlay">
 	<div class="fab" (click)="calculateTSP()">
 		<i class="material-icons">build</i>
 	</div>
 </div>
+
 
