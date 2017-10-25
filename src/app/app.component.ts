@@ -10,6 +10,8 @@ export class AppComponent implements OnInit {
 	googleMap: any;
 	geocoder: any;
 	bounds: any;
+	distanceService: any;
+	infoWindow: any;
 	iconColor: string = '#ff0000';
 	markersArray: any = [];
 	iconSize: number = 48;
@@ -33,6 +35,8 @@ export class AppComponent implements OnInit {
 		this.googleMap = new google.maps.Map(document.getElementById('map'), mapOptions);
 		this.geocoder = new google.maps.Geocoder();
 		this.bounds = new google.maps.LatLngBounds();
+		this.infoWindow = new google.maps.InfoWindow();
+		this.distanceService = new google.maps.DistanceMatrixService();
 
 		this.drawMarkers();
 	}
@@ -70,8 +74,16 @@ export class AppComponent implements OnInit {
 	                    icon: markerIcon
 	                });
 
-	                marker.addListener('click', function() {
+	                marker.addListener('mouseover', function() {
+	                	var contentString = '<h3>' + pub.name + '</h3><br />' + pub.address; 
+	                	self.infoWindow.setContent(contentString);
+	                	self.infoWindow.open(self.googleMap, marker);
+	                	//self.getSimpleRoute();
+					});
 
+					marker.addListener('mouseout', function() {
+	                	self.infoWindow.close();
+	                	//self.getSimpleRoute();
 					});
 
 	                self.markersArray.push(marker);
@@ -81,11 +93,13 @@ export class AppComponent implements OnInit {
 		}
 	}
 
-	
+	getSimpleRoute() {
+
+	}
 
 
 
-	
+
 
 	getMapStyles() {
         return [
