@@ -18,6 +18,8 @@ export class AppComponent implements OnInit {
 	markersArray: any = [];
 	iconSize: number = 48;
 
+	loading: boolean = false;
+
 	origin: any;
 
 	ignoreAddress: string = '';
@@ -173,6 +175,7 @@ export class AppComponent implements OnInit {
 	}
 
 	getOptimalRoute() {
+		this.loading = true;
 		var waypoints = [];
 
 		for(let pub of this.pubs) {
@@ -196,7 +199,6 @@ export class AppComponent implements OnInit {
     	this.directionsDisplay.setMap(this.googleMap);
 
 		console.log(waypoints);
-		console.log(this.origin);
 		
 		var request = {
 	        origin: this.origin,
@@ -205,12 +207,16 @@ export class AppComponent implements OnInit {
 	        optimizeWaypoints: true,
 	        travelMode: 'WALKING',
 	    }
+	    
 	    var self = this;
 	    this.directionsService.route(request, function (response, status) {
 	    	console.log(response);
 	        if (status == 'OK') {
 	            self.directionsDisplay.setDirections(response);
 	        }
+	        self.ngZone.run(() => {
+		        self.loading = false;
+		    });
 	    });
 	}
 
