@@ -10,15 +10,30 @@ export class AppComponent implements OnInit {
 	googleMap: any;
 	geocoder: any;
 	bounds: any;
-	distanceService: any;
+	//distanceService: any;
+	directionsService: any;
+	directionsDisplay: any;
 	infoWindow: any;
 	iconColor: string = '#ff0000';
 	markersArray: any = [];
 	iconSize: number = 48;
 
+	origin: any;
+
+	ignoreAddress: string = '';
+
 	originMarker: any;
 	destinationMarker: any;
 
+	destinationSymbol = {
+        path: google.maps.SymbolPath.CIRCLE,
+        strokeWeight: 4,
+        fillColor: "#55b02e",
+        strokeColor: "#8fd332",
+        fillOpacity: 0.2,
+        strokeOpacity: 0.8,
+        scale: 24
+    };
 	markerPath = "M11.168,14.133c0.075,0,0.189-0.01,0.361-0.033c0.554-0.078,1.687-0.523,2.147-0.836c0.293-0.196,0.79-0.632,0.992-1.038c0.151-0.306,0.281-0.717,0.229-1.11c-0.054-0.392-0.29-1.429-1.358-1.566c-0.533-0.069-0.897-0.021-1.128,0.045c-0.005-0.371-0.025-0.759-0.067-1.165c-0.025-0.781-2.09-1.411-4.632-1.411c-2.542,0-4.606,0.63-4.632,1.411l0,0c-0.536,5.325,2.207,7.497,4.632,7.497C8.938,15.926,10.244,15.371,11.168,14.133z M12.368,10.691c0.343-0.277,0.945-0.623,1.562-0.294c0.24,0.128,0.508,0.523,0.404,1.03s-0.705,1.061-1.176,1.285c-0.465,0.221-0.978,0.293-1.352,0.312C12.086,12.37,12.287,11.595,12.368,10.691z M7.71,7.731c2.165,0,3.92,0.32,3.92,0.712c0,0.394-1.756,0.712-3.92,0.712c-2.165,0-3.92-0.32-3.92-0.712C3.791,8.05,5.544,7.731,7.71,7.731z M3.731,9.174C4.541,9.59,6.019,9.869,7.71,9.869c1.698,0,3.182-0.281,3.989-0.699c0.154,4.27-2.103,6.031-3.984,6.031C5.833,15.2,3.579,13.439,3.731,9.174z";
 
 	constructor(
@@ -46,7 +61,8 @@ export class AppComponent implements OnInit {
 		this.geocoder = new google.maps.Geocoder();
 		this.bounds = new google.maps.LatLngBounds();
 		this.infoWindow = new google.maps.InfoWindow();
-		this.distanceService = new google.maps.DistanceMatrixService();
+		//this.distanceService = new google.maps.DistanceMatrixService();
+		this.directionsService = new google.maps.DirectionsService();
 
 		this.drawMarkers();
 
@@ -66,8 +82,20 @@ export class AppComponent implements OnInit {
 			            map: self.googleMap,
 			            position: pos,
 			            icon: icon,
-			            draggable: true
+			            draggable: true,
+			            cursor: 'move'
 			        });
+					var endLat = e.latLng.lat();
+    				var endLng = e.latLng.lng();
+					var coords = endLat +','+endLng;
+					self.origin = coords;
+
+					self.originMarker.addListener('drag', function(e) {
+						var endLat = e.latLng.lat();
+	    				var endLng = e.latLng.lng();
+						var coords = endLat +','+endLng;
+						self.origin = coords;
+					});
 			    });
 			}
 		});
@@ -103,7 +131,9 @@ export class AppComponent implements OnInit {
 	                var marker = new google.maps.Marker({
 	                    map: self.googleMap,
 	                    position: results[0].geometry.location,
-	                    icon: markerIcon
+	                    icon: markerIcon,
+	                    address: pub.address,
+	                    zIndex: 2
 	                });
 
 	                marker.addListener('mouseover', function() {
@@ -115,10 +145,21 @@ export class AppComponent implements OnInit {
 					marker.addListener('mouseout', function() {
 	                	self.infoWindow.close();
 					});
-
+					
 					marker.addListener('click', function() {
-	                	//
+						self.ignoreAddress = this.address;
+						self.ngZone.run(() => {
+							if(self.destinationMarker) {
+								self.destinationMarker.setMap(null);
+								self.destinationMarker = null;
+							}
+		                	if(!self.destinationMarker) {
+		                		self.destinationMarker = new google.maps.Marker({ map: self.googleMap, icon: self.destinationSymbol, zIndex: 9999 });
+		                	}
+		                	self.destinationMarker.setPosition(this.getPosition());
+		                });
 					});
+					
 
 	                self.markersArray.push(marker);
 	            }   
@@ -132,7 +173,55 @@ export class AppComponent implements OnInit {
 	}
 
 	getOptimalRoute() {
+		var waypoints = [];
 
+		for(let pub of this.pubs) {
+			if(pub.address == this.ignoreAddress) {
+			}
+			else {
+				var stop = {
+					location: pub.address,
+					stopover: true
+				};
+				waypoints.push(stop);
+			}
+			
+		}
+
+		if(this.directionsDisplay) {
+			this.directionsDisplay.setMap(null);
+			this.directionsDisplay = null;
+		}
+		this.directionsDisplay = new google.maps.DirectionsRenderer();
+    	this.directionsDisplay.setMap(this.googleMap);
+
+		console.log(waypoints);
+		console.log(this.origin);
+		
+		var request = {
+	        origin: this.origin,
+	        destination: this.ignoreAddress,
+	        waypoints: waypoints,
+	        optimizeWaypoints: true,
+	        travelMode: 'WALKING',
+	    }
+	    var self = this;
+	    this.directionsService.route(request, function (response, status) {
+	    	console.log(response);
+	        if (status == 'OK') {
+	            self.directionsDisplay.setDirections(response);
+	        }
+	    });
+	}
+
+	resetMarkers() {
+		this.destinationMarker.setMap(null);
+		this.destinationMarker = null;
+		this.originMarker.setMap(null);
+		this.originMarker = null;
+		this.directionsDisplay.setMap(null);
+		this.directionsDisplay = null;
+		this.ignoreAddress = '';
 	}
 
 
