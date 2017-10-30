@@ -1,6 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+import { LocationService }		from './services/location.service';
+
 import { AppComponent } from './app.component';
 
 @NgModule({
@@ -10,7 +12,9 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule
   ],
-  providers: [],
+  providers: [
+  	LocationService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

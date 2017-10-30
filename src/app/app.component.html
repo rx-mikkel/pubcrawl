@@ -1,4 +1,5 @@
 <div id="map" class="map"></div>
+
 <div class="guide-window" *ngIf="!originMarker || !destinationMarker">
 	<p *ngIf="!originMarker">Click anywhere to set your starting position</p>
 	<p *ngIf="!destinationMarker && originMarker">Click on the pub where you expect to end your pubcrawl</p>
@@ -15,7 +16,7 @@
 		<i class="material-icons">build</i>
 		<div class="fab-label">Calculate the optimal route</div>
 	</div>
-	
+
 </div>
 
 
