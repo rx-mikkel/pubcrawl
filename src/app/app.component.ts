@@ -60,7 +60,7 @@ export class AppComponent implements OnInit {
 	        streetViewControl: false,
 	        fullscreenControl: false,
 	        center: new google.maps.LatLng(57.048820, 9.921747),
-	        //styles: this.getMapStyles(),
+	        styles: this.getMapStyles(),
 	        mapTypeId: google.maps.MapTypeId.ROADMAP
 	    }
 
