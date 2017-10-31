@@ -178,6 +178,31 @@ export class AppComponent implements OnInit {
 	}
 
 	getSimpleRoute() {
+		this.loading = true;
+
+		if(this.directionsDisplay) {
+			this.directionsDisplay.setMap(null);
+			this.directionsDisplay = null;
+		}
+		this.directionsDisplay = new google.maps.DirectionsRenderer();
+    	this.directionsDisplay.setMap(this.googleMap);
+		
+		var request = {
+	        origin: this.origin,
+	        destination: this.ignoreAddress,
+	        travelMode: 'WALKING',
+	    }
+	    
+	    var self = this;
+	    this.directionsService.route(request, function (response, status) {
+	    	console.log(response);
+	        if (status == 'OK') {
+	            self.directionsDisplay.setDirections(response);
+	        }
+	        self.ngZone.run(() => {
+		        self.loading = false;
+		    });
+	    });
 
 	}
 
