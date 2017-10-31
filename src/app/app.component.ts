@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
 
 	pubs: any;
 
-	ignoreAddress: string = '';
+	selectedAddress: string = '';
 
 	originMarker: any;
 	destinationMarker: any;
@@ -157,7 +157,7 @@ export class AppComponent implements OnInit {
 					});
 					
 					marker.addListener('click', function() {
-						self.ignoreAddress = this.address;
+						self.selectedAddress = this.address;
 						self.ngZone.run(() => {
 							if(self.destinationMarker) {
 								self.destinationMarker.setMap(null);
@@ -189,7 +189,7 @@ export class AppComponent implements OnInit {
 		
 		var request = {
 	        origin: this.origin,
-	        destination: this.ignoreAddress,
+	        destination: this.selectedAddress,
 	        travelMode: 'WALKING',
 	    }
 	    
@@ -211,7 +211,7 @@ export class AppComponent implements OnInit {
 		var waypoints = [];
 
 		for(let pub of this.pubs) {
-			if(pub.address == this.ignoreAddress) {
+			if(pub.address == this.selectedAddress) {
 			}
 			else {
 				var stop = {
@@ -234,7 +234,7 @@ export class AppComponent implements OnInit {
 		
 		var request = {
 	        origin: this.origin,
-	        destination: this.ignoreAddress,
+	        destination: this.selectedAddress,
 	        waypoints: waypoints,
 	        optimizeWaypoints: true,
 	        travelMode: 'WALKING',
@@ -259,7 +259,7 @@ export class AppComponent implements OnInit {
 		this.originMarker = null;
 		this.directionsDisplay.setMap(null);
 		this.directionsDisplay = null;
-		this.ignoreAddress = '';
+		this.selectedAddress = '';
 	}
 
 	
