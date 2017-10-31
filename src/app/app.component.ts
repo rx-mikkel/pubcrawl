@@ -60,12 +60,14 @@ export class AppComponent implements OnInit {
 	        streetViewControl: false,
 	        fullscreenControl: false,
 	        center: new google.maps.LatLng(57.048820, 9.921747),
-	        styles: this.getMapStyles(),
+	        //styles: this.getMapStyles(),
 	        mapTypeId: google.maps.MapTypeId.ROADMAP
 	    }
 
 		this.googleMap = new google.maps.Map(document.getElementById('map'), mapOptions);
 		
+		/*
+
 		this.geocoder = new google.maps.Geocoder();
 		this.bounds = new google.maps.LatLngBounds();
 		this.infoWindow = new google.maps.InfoWindow();
@@ -107,11 +109,11 @@ export class AppComponent implements OnInit {
 			    });
 			}
 		});
-
+		*/
 		
 	}
 
-	
+	/*
 	drawMarkers() {
 		for(let pub of this.pubs) {
 			var self = this;
@@ -178,6 +180,31 @@ export class AppComponent implements OnInit {
 	}
 
 	getSimpleRoute() {
+		this.loading = true;
+
+		if(this.directionsDisplay) {
+			this.directionsDisplay.setMap(null);
+			this.directionsDisplay = null;
+		}
+		this.directionsDisplay = new google.maps.DirectionsRenderer();
+    	this.directionsDisplay.setMap(this.googleMap);
+		
+		var request = {
+	        origin: this.origin,
+	        destination: this.ignoreAddress,
+	        travelMode: 'WALKING',
+	    }
+	    
+	    var self = this;
+	    this.directionsService.route(request, function (response, status) {
+	    	console.log(response);
+	        if (status == 'OK') {
+	            self.directionsDisplay.setDirections(response);
+	        }
+	        self.ngZone.run(() => {
+		        self.loading = false;
+		    });
+	    });
 
 	}
 
@@ -322,5 +349,7 @@ export class AppComponent implements OnInit {
 		  }
 		];
 	}
+
+	*/
 
 }
