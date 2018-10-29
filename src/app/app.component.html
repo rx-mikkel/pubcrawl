@@ -1,21 +1,21 @@
 <div id="map" class="map"></div>
 
 <div class="guide-window" *ngIf="!originMarker || !destinationMarker">
-	<p *ngIf="!originMarker">Click anywhere to set your starting position</p>
-	<p *ngIf="!destinationMarker && originMarker">Click on the pub where you expect to end your pubcrawl</p>
+  <p *ngIf="!originMarker">Click anywhere to set your starting position</p>
+  <p *ngIf="!destinationMarker && originMarker">Click on the pub where you expect to end your pubcrawl</p>
 </div>
 <div class="guide-window" *ngIf="loading">
-	<p>Loading</p>
+  <p>Loading</p>
 </div>
 <div class="ui-overlay">
-	<div style="background-color: #445566; margin-bottom: 16px; transform: scale(.8);" class="fab" (click)="resetMarkers()" *ngIf="destinationMarker && originMarker">
-		<i class="material-icons">close</i>
-		<div class="fab-label">Reset and start over</div>
-	</div>
-	<div class="fab" (click)="getOptimalRoute()" *ngIf="destinationMarker && originMarker">
-		<i class="material-icons">build</i>
-		<div class="fab-label">Calculate the optimal route</div>
-	</div>
+  <div style="background-color: #445566; margin-bottom: 16px; transform: scale(.8);" class="fab" (click)="resetMarkers()" *ngIf="destinationMarker && originMarker">
+    <i class="material-icons">close</i>
+    <div class="fab-label">Reset and start over</div>
+  </div>
+  <div class="fab" (click)="getOptimalRoute()" *ngIf="destinationMarker && originMarker">
+    <i class="material-icons">build</i>
+    <div class="fab-label">Calculate the optimal route</div>
+  </div>
 
 </div>
 

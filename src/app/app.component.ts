@@ -257,8 +257,11 @@ export class AppComponent implements OnInit {
 		this.destinationMarker = null;
 		this.originMarker.setMap(null);
 		this.originMarker = null;
-		this.directionsDisplay.setMap(null);
-		this.directionsDisplay = null;
+		if(this.directionsDisplay) {
+			this.directionsDisplay.setMap(null);
+			this.directionsDisplay = null;
+		}
+		
 		this.selectedAddress = '';
 	}
 
